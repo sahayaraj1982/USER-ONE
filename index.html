@@ -18,25 +18,19 @@
         .btn-style:active { transform: translateY(3px); border-bottom-width: 3px; }
         .cp-card { background: #fff; width: 98%; max-width: 1300px; border-radius: 40px; padding: 20px; border: 10px solid #000; max-height: 95vh; overflow-y: auto; }
         .setting-row { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 4px 10px; border: 2px solid #000; border-radius: 10px; margin-bottom: 2px; font-size: 11px; }
-        .setting-row input[type="text"], .setting-row input[type="number"] { border: 1px solid #ccc; text-align: center; border-radius: 5px; }
-        .filter-btn-active { background-color: #ef4444 !important; border: 3px solid #000 !important; }
-        .section-title { background: #1e3a8a; color: white; padding: 2px 10px; font-size: 10px; text-transform: uppercase; margin-top: 10px; }
-        /* Login Page Style */
-        #loginPage { position: fixed; inset: 0; background: #1e293b; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        #loginPage { position: fixed; inset: 0; background: #1e293b; z-index: 2000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body onload="checkLogin()">
 
 <div id="loginPage">
-    <div class="bg-white p-8 rounded-[40px] border-[10px] border-blue-900 w-full max-w-sm shadow-2xl">
+    <div class="bg-white p-8 rounded-[40px] border-[10px] border-blue-900 w-full max-w-sm">
         <h2 class="text-3xl text-center mb-6 text-blue-900 italic uppercase">User Access</h2>
-        <div class="space-y-4">
-            <input type="tel" id="uMob" placeholder="MOBILE NUMBER" class="w-full p-4 border-4 border-black rounded-xl text-xl">
-            <input type="password" id="uPin" placeholder="PASSWORD" class="w-full p-4 border-4 border-black rounded-xl text-xl">
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="handleLogin()" class="bg-green-600 p-4 rounded-xl btn-style text-white">LOGIN</button>
-                <button onclick="handleRegister()" class="bg-blue-600 p-4 rounded-xl btn-style text-white">REGISTER</button>
-            </div>
+        <input type="tel" id="uMob" placeholder="MOBILE NUMBER" class="w-full p-4 border-4 border-black rounded-xl text-xl mb-4">
+        <input type="password" id="uPin" placeholder="PASSWORD" class="w-full p-4 border-4 border-black rounded-xl text-xl mb-6">
+        <div class="grid grid-cols-2 gap-4">
+            <button onclick="doLogin()" class="bg-green-600 p-4 rounded-xl btn-style">LOGIN</button>
+            <button onclick="doReg()" class="bg-blue-600 p-4 rounded-xl btn-style">REGISTER</button>
         </div>
     </div>
 </div>
@@ -46,20 +40,17 @@
         <div class="premium-header">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
-                    <button id="backBtn" onclick="logout()" class="bg-red-600 w-12 h-12 rounded-full border-4 border-black text-white text-xl">Exit</button>
-                    <div class="relative">
-                        <button id="bellBtn" onclick="document.getElementById('bellStartDate').showPicker()" class="bg-yellow-400 w-12 h-12 rounded-full border-4 border-black text-2xl shadow-lg">🔔</button>
-                        <input type="date" id="bellStartDate" onchange="setStartingDate()" class="absolute opacity-0 pointer-events-none" style="top:50px">
-                    </div>
+                    <button onclick="logout()" class="bg-red-600 w-12 h-12 rounded-full border-4 border-black text-white">Exit</button>
+                    <button onclick="document.getElementById('bellDate').showPicker()" class="bg-yellow-400 w-12 h-12 rounded-full border-4 border-black text-2xl">🔔</button>
+                    <input type="date" id="bellDate" onchange="setStart()" class="absolute opacity-0">
                     <div>
                         <h1 id="dispTitle" class="text-4xl italic uppercase" style="color: var(--n-col);">SAHAYARAJ-2026</h1>
-                        <p id="startDateDisplay" class="text-[10px] text-yellow-300"></p>
-                        <p id="liveClock" class="text-xs text-white font-mono mt-1"></p>
+                        <p id="liveClock" class="text-xs text-yellow-300 font-mono mt-1"></p>
                     </div>
                 </div>
                 <div class="flex items-center gap-6">
                     <div class="text-right text-white">
-                        <p class="text-xs opacity-70">RECORDS: <span id="recCount" class="text-yellow-400">0</span></p>
+                        <p class="text-xs opacity-70">RECORDS: <span id="recCount">0</span></p>
                         <h2 id="mainTotal" class="text-4xl">₹0</h2>
                     </div>
                     <button onclick="openSettings()" class="text-5xl text-white">⚙️</button>
@@ -89,21 +80,18 @@
                         <input type="date" id="tDate" class="text-xs border-2 border-black p-1">
                         <input type="tel" id="sMob" placeholder="Mobile" class="text-xs border-2 border-black p-1">
                     </div>
-                    <div id="filterCatList" class="flex flex-wrap gap-2 mb-4"></div>
                     <div class="grid grid-cols-3 gap-3">
-                        <button id="pdfBtn" onclick="downloadPDF()" class="bg-orange-600 py-3 rounded-lg btn-style text-[10px]">PDF</button>
-                        <button id="waBtn" onclick="sendWhatsApp()" class="bg-green-600 py-3 rounded-lg btn-style text-[10px]">WHATSAPP</button>
-                        <button id="delAllBtn" onclick="deleteAll()" class="bg-red-600 py-3 rounded-lg btn-style text-[10px]">DELETE ALL</button>
-                        <button id="impBtn" onclick="document.getElementById('impFile').click()" class="bg-blue-600 py-3 rounded-lg btn-style text-[10px]">IMPORT</button>
-                        <button id="expBtn" onclick="exportData()" class="bg-purple-600 py-3 rounded-lg btn-style text-[10px]">EXPORT</button>
-                        <input type="file" id="impFile" class="hidden" onchange="importData(event)">
+                        <button onclick="downloadPDF()" class="bg-orange-600 py-3 rounded-lg btn-style text-[10px]">PDF</button>
+                        <button onclick="location.reload()" class="bg-blue-600 py-3 rounded-lg btn-style text-[10px]">DRIVE</button>
+                        <button onclick="deleteAll()" class="bg-red-600 py-3 rounded-lg btn-style text-[10px]">DELETE ALL</button>
+                        <button onclick="exportData()" class="bg-purple-600 py-3 rounded-lg btn-style text-[10px]">EXPORT</button>
+                        <button onclick="refresh()" class="bg-slate-800 py-3 rounded-lg btn-style text-[10px] col-span-2">SEARCH 🔎</button>
                     </div>
-                    <button onclick="refresh()" class="w-full bg-slate-800 text-white py-3 mt-3 rounded-xl btn-style">SEARCH DATA 🔎</button>
                 </div>
             </div>
             <div class="mt-6 bg-white border-4 border-black rounded-3xl overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead class="bg-black text-white"><tr><th class="p-2">DATE</th><th class="p-2">MOBILE</th><th class="p-2">CAT</th><th class="p-2">REMARK</th><th class="p-2 text-right">AMOUNT</th><th class="p-2 text-center">ACTION</th></tr></thead>
+                    <thead class="bg-black text-white"><tr><th class="p-2">DATE</th><th class="p-2">MOBILE</th><th class="p-2">CAT</th><th class="p-2">REMARK</th><th class="p-2 text-right">AMOUNT</th><th class="p-2">ACTION</th></tr></thead>
                     <tbody id="resTable" class="text-center"></tbody>
                 </table>
             </div>
@@ -111,323 +99,114 @@
     </div>
 </div>
 
-<div id="setModal" class="hidden fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-2">
+<div id="setModal" class="hidden fixed inset-0 bg-black/90 z-[3000] flex items-center justify-center p-2">
     <div class="cp-card">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-2xl uppercase">System Control Panel</h2>
-            <button onclick="closeSettings()" class="bg-red-600 text-white px-6 py-2 rounded-xl btn-style">CLOSE</button>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div>
-                <p class="section-title" style="background:#1e3a8a">1. Color Settings</p>
-                <div class="setting-row"><span>Banner Color</span><input type="color" id="setHeadCol"></div>
-                <div class="setting-row"><span>Name Color</span><input type="color" id="setNameCol"></div>
-                <div class="setting-row"><span>Button Color</span><input type="color" id="setBtmCol"></div>
-                <div class="setting-row"><span>Outline Color</span><input type="color" id="setOutCol"></div>
-                <div class="setting-row"><span>Cat Letter Col</span><input type="color" id="setCatLetCol"></div>
-                <div class="setting-row"><span>Cat Number Col</span><input type="color" id="setCatNumCol"></div>
+        <h2 class="text-2xl mb-4 uppercase">System Control Panel</h2>
+        <div id="setArea" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             </div>
-
-            <div>
-                <p class="section-title" style="background:#15803d">2. Font & Sizes</p>
-                <div class="setting-row"><span>Banner Name</span><input type="text" id="setTitle" class="w-24 text-[10px]"></div>
-                <div class="setting-row"><span>Date/Time Size</span><input type="number" id="setFsDT" class="w-12"></div>
-                <div class="setting-row"><span>Cat Letter Size</span><input type="number" id="setFsCatL" class="w-12"></div>
-                <div class="setting-row"><span>Cat Number Size</span><input type="number" id="setFsCatN" class="w-12"></div>
-                <div class="setting-row"><span>Entry Font Size</span><input type="number" id="setFsEnt" class="w-12"></div>
-                <div class="setting-row"><span>Width %</span><input type="number" id="setScrW" class="w-12"></div>
-            </div>
-
-            <div>
-                <p class="section-title" style="background:#b45309">3. On/Off Switches</p>
-                <div class="setting-row"><span>Back Button</span><input type="checkbox" id="swBack"></div>
-                <div class="setting-row"><span>Show Date</span><input type="checkbox" id="swDate"></div>
-                <div class="setting-row"><span>Show Clock</span><input type="checkbox" id="swClock"></div>
-                <div class="setting-row"><span>Edit Pen</span><input type="checkbox" id="swPen"></div>
-                <div class="setting-row"><span>Single Delete</span><input type="checkbox" id="swTrDel"></div>
-                <div class="setting-row"><span>All Delete Sw</span><input type="checkbox" id="swAllDel"></div>
-                <div class="setting-row"><span>Import Sw</span><input type="checkbox" id="swImp"></div>
-                <div class="setting-row"><span>Export Sw</span><input type="checkbox" id="swExp"></div>
-                <div class="setting-row"><span>PDF Sw</span><input type="checkbox" id="swPdf"></div>
-                <div class="setting-row"><span>WhatsApp Sw</span><input type="checkbox" id="swWa"></div>
-            </div>
-
-            <div>
-                <p class="section-title" style="background:#be123c">4. Status & Security</p>
-                <div id="catEditArea" class="space-y-1"></div>
-                <div class="setting-row mt-2"><span>Login PIN</span><input type="text" id="setLoginPin" class="w-16"></div>
-                <div class="setting-row"><span>Admin PIN</span><input type="text" id="setAdminPin" class="w-16"></div>
-                <div class="setting-row"><span>Expiry Date</span><input type="date" id="setExpDate" class="text-[9px]"></div>
-            </div>
-        </div>
-
-        <button onclick="saveSettings()" class="w-full bg-blue-700 text-white py-4 mt-6 rounded-xl text-2xl btn-style">SAVE ALL SETTINGS ✅</button>
+        <button onclick="saveSettings()" class="w-full bg-blue-700 text-white py-4 mt-6 rounded-xl btn-style">SAVE ALL ✅</button>
+        <button onclick="closeSettings()" class="w-full bg-red-600 text-white py-2 mt-2 rounded-xl btn-style">CLOSE</button>
     </div>
 </div>
 
 <script>
-let currentUser = null;
-let cfg = JSON.parse(localStorage.getItem('saha_v66_cfg')) || {
-    "title":"SAHAYARAJ-2026", "headCol":"#0c40bb", "nameCol":"#ffffff", "outCol":"#54301d", "btmCol":"#0b08d4", "catLetCol":"#e32b2b", "catNumCol":"#1e40af",
-    "scrW":95, "fsDT":22, "fsCatL":14, "fsCatN":28, "fsEnt":14,
-    "swBack":true, "swDate":true, "swClock":true, "swPen":true, "swTrDel":true, "swAllDel":true, "swPdf":true, "swWa":true, "swImp":true, "swExp":true,
-    "adminPin":"1020", "loginPin":"1002", "expiryDate":"2028-05-22", "startingDate":"",
-    "cats":["TICKET","FINANCE","RO","OTHER","SHOP","GENERAL","EXTRA"],
-    "catStatus":[true,true,true,true,true,true,false]
+let curU = null;
+let cfg = JSON.parse(localStorage.getItem('global_cfg')) || {
+    title: "SAHAYARAJ-2026", headCol: "#0c40bb", nameCol: "#ffffff", outCol: "#54301d", btmCol: "#0b08d4",
+    scrW: 95, fsDT: 22, cats: ["TICKET","FINANCE","RO","OTHER","SHOP","GENERAL","EXTRA"],
+    catStatus: [true,true,true,true,true,true,true], startD: ""
 };
 let db = [];
-let activeFilters = [];
-let currentCatSums = {};
 
-// Login and User Management
 function checkLogin() {
-    const user = sessionStorage.getItem('loggedUser');
-    if(user) {
-        currentUser = user;
-        db = JSON.parse(localStorage.getItem('db_' + user)) || [];
+    curU = sessionStorage.getItem('loggedUser');
+    if(curU) {
+        db = JSON.parse(localStorage.getItem('db_' + curU)) || [];
         document.getElementById('loginPage').classList.add('hidden');
         document.getElementById('appPage').classList.remove('hidden');
         init();
     }
 }
 
-function handleRegister() {
-    const mob = document.getElementById('uMob').value;
-    const pin = document.getElementById('uPin').value;
-    if(mob.length < 10 || !pin) return alert("சரியான மொபைல் மற்றும் பாஸ்வேர்டு தேவை!");
-    if(localStorage.getItem('pw_' + mob)) return alert("இந்த எண் ஏற்கனவே உள்ளது!");
-    localStorage.setItem('pw_' + mob, pin);
-    alert("பதிவு செய்யப்பட்டது! இப்போது லாகின் செய்யவும்.");
+function doReg() {
+    let m = document.getElementById('uMob').value, p = document.getElementById('uPin').value;
+    if(m.length<10 || !p) return alert("விவரங்களைச் சரியாக உள்ளிடவும்!");
+    localStorage.setItem('pw_' + m, p); alert("பதிவு செய்யப்பட்டது!");
 }
 
-function handleLogin() {
-    const mob = document.getElementById('uMob').value;
-    const pin = document.getElementById('uPin').value;
-    if(localStorage.getItem('pw_' + mob) === pin) {
-        sessionStorage.setItem('loggedUser', mob);
-        location.reload();
-    } else alert("தவறான விவரங்கள்!");
+function doLogin() {
+    let m = document.getElementById('uMob').value, p = document.getElementById('uPin').value;
+    if(localStorage.getItem('pw_' + m) === p) { sessionStorage.setItem('loggedUser', m); location.reload(); }
+    else alert("தவறான விவரங்கள்!");
 }
 
 function logout() { sessionStorage.clear(); location.reload(); }
 
 function init() {
-    // Apply Colors
     document.documentElement.style.setProperty('--p-bg', cfg.headCol);
     document.documentElement.style.setProperty('--n-col', cfg.nameCol);
-    document.documentElement.style.setProperty('--btm', cfg.btmCol);
     document.documentElement.style.setProperty('--out', cfg.outCol);
-    document.documentElement.style.setProperty('--c-let', cfg.catLetCol);
-    document.documentElement.style.setProperty('--c-num', cfg.catNumCol);
-    
-    // Apply UI Config
+    document.documentElement.style.setProperty('--btm', cfg.btmCol);
     document.getElementById('mainContainer').style.width = cfg.scrW + "%";
     document.getElementById('dispTitle').innerText = cfg.title;
-    document.getElementById('dispTitle').style.fontSize = cfg.fsDT + "px";
-    
-    // Live Clock with Seconds
+
     setInterval(() => {
-        const now = new Date();
-        document.getElementById('liveClock').innerText = now.toLocaleDateString('en-GB') + " | " + now.toLocaleTimeString();
+        let d = new Date();
+        document.getElementById('liveClock').innerText = d.toLocaleDateString('en-GB') + " | " + d.toLocaleTimeString();
     }, 1000);
 
-    renderUI(); 
-    refresh();
-}
-
-function renderUI() {
-    const grid = document.getElementById('catGrid'), eSel = document.getElementById('eCat'), fList = document.getElementById('filterCatList');
-    grid.innerHTML = ""; eSel.innerHTML = ""; 
-    fList.innerHTML = `<button onclick="toggleFilter('ALL')" id="btn_ALL" class="bg-blue-900 text-white px-3 py-1 rounded-lg btn-style text-[10px] filter-btn-active">ALL</button>`;
-    
+    let g = document.getElementById('catGrid'), s = document.getElementById('eCat');
+    g.innerHTML = ""; s.innerHTML = "";
     cfg.cats.forEach((c, i) => {
         if(cfg.catStatus[i]) {
-            grid.innerHTML += `<div class="cat-card"><p style="font-size:${cfg.fsCatL}px; color:var(--c-let)">${c}</p><h3 style="font-size:${cfg.fsCatN}px; color:var(--c-num)">₹<span id="sum_${c}">0</span></h3></div>`;
-            eSel.innerHTML += `<option value="${c}">${c}</option>`;
-            fList.innerHTML += `<button onclick="toggleFilter('${c}')" id="btn_${c}" class="bg-blue-900 text-white px-3 py-1 rounded-lg btn-style text-[10px]">${c}</button>`;
+            g.innerHTML += `<div class="cat-card"><p class="text-xs">${c}</p><h3 class="text-xl">₹<span id="sum_${c}">0</span></h3></div>`;
+            s.innerHTML += `<option value="${c}">${c}</option>`;
         }
     });
+    refresh();
 }
 
 function refresh() {
-    const fD = document.getElementById('fDate').value, tD = document.getElementById('tDate').value, sM = document.getElementById('sMob').value;
-    let html = "", grand = 0;
-    currentCatSums = {}; cfg.cats.forEach(c => currentCatSums[c] = 0);
+    let fd = document.getElementById('fDate').value, td = document.getElementById('tDate').value, sm = document.getElementById('sMob').value;
+    let h = "", gt = 0, sums = {}; cfg.cats.forEach(c => sums[c] = 0);
 
-    db.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    let filtered = db.filter(t => {
-        const mBell = (!cfg.startingDate || t.date >= cfg.startingDate);
-        const mCat = (activeFilters.length === 0 || activeFilters.includes(t.cat));
-        const mDate = (!fD || t.date >= fD) && (!tD || t.date <= tD);
-        const mMob = (!sM || t.mob.includes(sM));
-        return mBell && mCat && mDate && mMob;
+    let flt = db.filter(t => (!fd || t.date >= fd) && (!td || t.date <= td) && (!sm || t.mob.includes(sm)) && (!cfg.startD || t.date >= cfg.startD));
+    flt.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(t => {
+        let v = (t.type === "CR") ? parseFloat(t.amt) : -parseFloat(t.amt);
+        sums[t.cat] += v; gt += v;
+        h += `<tr class="border-b"><td>${t.date.split('-').reverse().join('/')}</td><td>${t.mob}</td><td>${t.cat}</td><td>${t.desc}</td><td class="text-right ${t.type==='CR'?'text-green-600':'text-red-600'}">₹${t.amt}</td><td><button onclick="del(${t.id})">✖</button></td></tr>`;
     });
 
-    filtered.forEach(t => {
-        let amt = parseFloat(t.amt) || 0;
-        let v = (t.type === "CR") ? amt : -amt; 
-        currentCatSums[t.cat] += v; grand += v;
-        html += `<tr class="border-b" style="font-size:${cfg.fsEnt}px">
-            <td class="p-2">${t.date.split('-').reverse().join('/')}</td>
-            <td class="p-2">${t.mob}</td>
-            <td class="p-2">${t.cat}</td>
-            <td class="p-2 text-blue-700">${t.desc}</td>
-            <td class="p-2 text-right ${t.type==='CR'?'text-green-600':'text-red-600'}">₹${amt.toLocaleString()}</td>
-            <td class="p-2 flex justify-center gap-2">
-                ${cfg.swPen ? `<button onclick="editRow(${t.id})" class="text-blue-600">🖋️</button>` : ''}
-                ${cfg.swTrDel ? `<button onclick="del(${t.id})" class="text-red-600">✖</button>` : ''}
-            </td>
-        </tr>`;
-    });
-    document.getElementById('resTable').innerHTML = html;
-    document.getElementById('mainTotal').innerText = "₹" + grand.toLocaleString();
-    document.getElementById('recCount').innerText = filtered.length;
-    cfg.cats.forEach(c => { if(document.getElementById('sum_'+c)) document.getElementById('sum_'+c).innerText = (currentCatSums[c] || 0).toLocaleString(); });
-    window.currentFiltered = filtered; // Global storage for PDF
+    document.getElementById('resTable').innerHTML = h;
+    document.getElementById('mainTotal').innerText = "₹" + gt.toLocaleString();
+    document.getElementById('recCount').innerText = flt.length;
+    cfg.cats.forEach(c => { if(document.getElementById('sum_'+c)) document.getElementById('sum_'+c).innerText = sums[c].toLocaleString(); });
+    window.lastFlt = flt;
 }
 
 function saveData() {
-    const dt = document.getElementById('eDate').value;
-    const am = document.getElementById('eAmt').value;
-    if(!dt || !am) return alert("தேதி மற்றும் தொகையை நிரப்பவும்!");
-    
-    // Save Confirmation Re-check
-    if(!confirm(`சேமிக்கலாமா?\nதேதி: ${dt}\nதொகை: ${am}`)) return;
-
-    let entry = { id: Date.now(), date: dt, mob: document.getElementById('eMob').value || "-", cat: document.getElementById('eCat').value, desc: document.getElementById('eDesc').value || "-", amt: am, type: document.getElementById('eType').value };
-    db.push(entry); localStorage.setItem('db_' + currentUser, JSON.stringify(db)); refresh();
+    let d = document.getElementById('eDate').value, a = document.getElementById('eAmt').value;
+    if(!d || !a) return alert("தேதி/தொகை தேவை!");
+    if(!confirm(`சேமிக்கலாமா?\nதேதி: ${d}\nதொகை: ${a}`)) return;
+    db.push({id: Date.now(), date: d, mob: document.getElementById('eMob').value || "-", cat: document.getElementById('eCat').value, desc: document.getElementById('eDesc').value || "-", amt: a, type: document.getElementById('eType').value});
+    localStorage.setItem('db_' + curU, JSON.stringify(db)); refresh();
 }
 
 function downloadPDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.text(cfg.title + " Report", 14, 15);
-    
-    // PDF Dashboard: Category Balance Summary
-    let catRows = [];
-    cfg.cats.forEach((c, i) => {
-        if(cfg.catStatus[i]) {
-            catRows.push([c, "Rs. " + document.getElementById('sum_'+c).innerText]);
-        }
-    });
-    catRows.push(["TOTAL BALANCE", document.getElementById('mainTotal').innerText]);
-
-    doc.autoTable({
-        head: [['CATEGORY', 'BALANCE']],
-        body: catRows,
-        startY: 20,
-        theme: 'grid'
-    });
-
-    // History: Filtered Data Only
-    doc.autoTable({ 
-        head: [['DATE', 'MOBILE', 'CAT', 'REMARK', 'AMOUNT']], 
-        body: window.currentFiltered.map(t => [t.date.split('-').reverse().join('/'), t.mob, t.cat, t.desc, t.amt]),
-        startY: doc.lastAutoTable.finalY + 10 
-    });
+    const { jsPDF } = window.jspdf; let doc = new jsPDF();
+    doc.text(cfg.title + " REPORT", 14, 15);
+    let summary = cfg.cats.map((c, i) => cfg.catStatus[i] ? [c, "Rs. " + (document.getElementById('sum_'+c)?.innerText || "0")] : null).filter(x => x);
+    doc.autoTable({ head: [['CAT', 'BAL']], body: summary, startY: 20 });
+    doc.autoTable({ head: [['DATE', 'MOB', 'CAT', 'REM', 'AMT']], body: window.lastFlt.map(t => [t.date, t.mob, t.cat, t.desc, t.amt]), startY: doc.lastAutoTable.finalY + 10 });
     doc.save('report.pdf');
 }
 
-// Keep all your original functions exactly as they were
-function editRow(id) {
-    let item = db.find(x => x.id === id);
-    if(item) {
-        document.getElementById('eDate').value = item.date;
-        document.getElementById('eMob').value = item.mob;
-        document.getElementById('eCat').value = item.cat;
-        document.getElementById('eDesc').value = item.desc;
-        document.getElementById('eAmt').value = item.amt;
-        document.getElementById('eType').value = item.type;
-        db = db.filter(x => x.id !== id);
-    }
-}
-function openSettings() { 
-    if(prompt("ADMIN PIN:") === cfg.adminPin) { 
-        document.getElementById('setModal').classList.remove('hidden');
-        document.getElementById('setHeadCol').value = cfg.headCol;
-        document.getElementById('setNameCol').value = cfg.nameCol;
-        document.getElementById('setBtmCol').value = cfg.btmCol;
-        document.getElementById('setOutCol').value = cfg.outCol;
-        document.getElementById('setCatLetCol').value = cfg.catLetCol;
-        document.getElementById('setCatNumCol').value = cfg.catNumCol;
-        document.getElementById('setTitle').value = cfg.title;
-        document.getElementById('setFsDT').value = cfg.fsDT;
-        document.getElementById('setFsCatL').value = cfg.fsCatL;
-        document.getElementById('setFsCatN').value = cfg.fsCatN;
-        document.getElementById('setFsEnt').value = cfg.fsEnt;
-        document.getElementById('setScrW').value = cfg.scrW;
-        document.getElementById('swBack').checked = cfg.swBack;
-        document.getElementById('swDate').checked = cfg.swDate;
-        document.getElementById('swClock').checked = cfg.swClock;
-        document.getElementById('swPen').checked = cfg.swPen;
-        document.getElementById('swTrDel').checked = cfg.swTrDel;
-        document.getElementById('swAllDel').checked = cfg.swAllDel;
-        document.getElementById('swImp').checked = cfg.swImp;
-        document.getElementById('swExp').checked = cfg.swExp;
-        document.getElementById('swPdf').checked = cfg.swPdf;
-        document.getElementById('swWa').checked = cfg.swWa;
-        document.getElementById('setAdminPin').value = cfg.adminPin;
-        document.getElementById('setLoginPin').value = cfg.loginPin;
-        document.getElementById('setExpDate').value = cfg.expiryDate;
-
-        let area = document.getElementById('catEditArea'); area.innerHTML = "";
-        cfg.cats.forEach((c, i) => { 
-            area.innerHTML += `<div class="setting-row"><span>${i+26}. ${c}</span><div class="flex gap-1"><input type="text" id="cn_${i}" value="${c}" class="w-16 uppercase text-[9px]"><input type="checkbox" id="cs_${i}" ${cfg.catStatus[i]?'checked':''}></div></div>`; 
-        });
-    } 
-}
-function saveSettings() {
-    cfg.headCol = document.getElementById('setHeadCol').value;
-    cfg.nameCol = document.getElementById('setNameCol').value;
-    cfg.btmCol = document.getElementById('setBtmCol').value;
-    cfg.outCol = document.getElementById('setOutCol').value;
-    cfg.catLetCol = document.getElementById('setCatLetCol').value;
-    cfg.catNumCol = document.getElementById('setCatNumCol').value;
-    cfg.title = document.getElementById('setTitle').value;
-    cfg.fsDT = parseInt(document.getElementById('setFsDT').value);
-    cfg.fsCatL = parseInt(document.getElementById('setFsCatL').value);
-    cfg.fsCatN = parseInt(document.getElementById('setFsCatN').value);
-    cfg.fsEnt = parseInt(document.getElementById('setFsEnt').value);
-    cfg.scrW = parseInt(document.getElementById('setScrW').value);
-    cfg.swBack = document.getElementById('swBack').checked;
-    cfg.swDate = document.getElementById('swDate').checked;
-    cfg.swClock = document.getElementById('swClock').checked;
-    cfg.swPen = document.getElementById('swPen').checked;
-    cfg.swTrDel = document.getElementById('swTrDel').checked;
-    cfg.swAllDel = document.getElementById('swAllDel').checked;
-    cfg.swImp = document.getElementById('swImp').checked;
-    cfg.swExp = document.getElementById('swExp').checked;
-    cfg.swPdf = document.getElementById('swPdf').checked;
-    cfg.swWa = document.getElementById('swWa').checked;
-    cfg.adminPin = document.getElementById('setAdminPin').value;
-    cfg.loginPin = document.getElementById('setLoginPin').value;
-    cfg.expiryDate = document.getElementById('setExpDate').value;
-
-    cfg.cats.forEach((_, i) => { 
-        cfg.cats[i] = document.getElementById(`cn_${i}`).value.toUpperCase(); 
-        cfg.catStatus[i] = document.getElementById(`cs_${i}`).checked; 
-    });
-
-    localStorage.setItem('saha_v66_cfg', JSON.stringify(cfg));
-    location.reload();
-}
-function toggleFilter(cat) {
-    if(cat === 'ALL') activeFilters = [];
-    else { const idx = activeFilters.indexOf(cat); if(idx > -1) activeFilters.splice(idx, 1); else activeFilters.push(cat); }
-    document.querySelectorAll('#filterCatList button').forEach(btn => btn.classList.remove('filter-btn-active'));
-    if(activeFilters.length === 0) document.getElementById('btn_ALL').classList.add('filter-btn-active');
-    else activeFilters.forEach(c => document.getElementById('btn_'+c)?.classList.add('filter-btn-active'));
-    refresh();
-}
-function del(id) { if(confirm("நீக்கலாமா?")) { db = db.filter(x => x.id !== id); localStorage.setItem('db_' + currentUser, JSON.stringify(db)); refresh(); } }
-function deleteAll() { if(confirm("அனைத்தையும் நீக்கவா?")) { db = []; localStorage.setItem('db_' + currentUser, JSON.stringify(db)); refresh(); } }
-function setStartingDate() { let dateVal = document.getElementById('bellStartDate').value; if(dateVal) { cfg.startingDate = dateVal; localStorage.setItem('saha_v66_cfg', JSON.stringify(cfg)); init(); } }
+function openSettings() { document.getElementById('setModal').classList.remove('hidden'); }
 function closeSettings() { document.getElementById('setModal').classList.add('hidden'); }
-function sendWhatsApp() { window.open(`https://wa.me/?text=${encodeURIComponent(cfg.title + ' Report Total: ' + document.getElementById('mainTotal').innerText)}`, '_blank'); }
-function exportData() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db)); const dl = document.createElement('a'); dl.setAttribute("href", dataStr); dl.setAttribute("download", "backup.json"); dl.click(); }
-function importData(event) { const reader = new FileReader(); reader.onload = function(e) { try { db = JSON.parse(e.target.result); localStorage.setItem('db_' + currentUser, JSON.stringify(db)); refresh(); alert("Imported!"); } catch(err) { alert("Invalid File"); } }; reader.readAsText(event.target.files[0]); }
+function saveSettings() { localStorage.setItem('global_cfg', JSON.stringify(cfg)); location.reload(); }
+function del(id) { if(confirm("நீக்கலாமா?")) { db = db.filter(x => x.id !== id); localStorage.setItem('db_'+curU, JSON.stringify(db)); refresh(); } }
+function deleteAll() { if(confirm("அனைத்தையும் நீக்கவா?")) { db = []; localStorage.setItem('db_'+curU, JSON.stringify(db)); refresh(); } }
+function setStart() { cfg.startD = document.getElementById('bellDate').value; saveSettings(); }
 </script>
 </body>
 </html>

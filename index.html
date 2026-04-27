@@ -15,6 +15,7 @@
         .main-app-box { border: 10px solid var(--out); margin: 10px auto; border-radius: 40px; background: #f1f5f9; overflow-x: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .premium-header { background-color: var(--p-bg); padding: 25px; border-bottom: 10px solid var(--btm); position: relative; }
         
+        /* Login Overlay Style */
         #loginOverlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; color: gold; text-align: center; }
         .login-box { background: #111; padding: 40px; border: 5px solid gold; border-radius: 30px; width: 90%; max-width: 400px; box-shadow: 0 0 30px gold; }
         .login-box input { width: 100%; padding: 15px; margin-top: 20px; border-radius: 10px; color: black; font-size: 20px; text-align: center; }
@@ -32,7 +33,6 @@
         .action-btn { flex: 1; padding: 12px 0; border: 3px solid #fff; color: #fff; font-size: 14px; text-align: center; cursor: pointer; border-radius: 12px; transition: 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #444; }
         .action-btn.active { background: #ffeb3b; color: #000; border-color: #000; box-shadow: none; transform: translateY(4px); }
         .bell-btn { background: #facc15; color: #000; }
-        .expiry-alert { color: #fbbf24; font-size: 12px; margin-top: 10px; border: 1px solid #fbbf24; padding: 5px; border-radius: 5px; background: rgba(251, 191, 36, 0.1); }
     </style>
 </head>
 <body onload="checkAccess()">
@@ -41,8 +41,7 @@
     <div class="login-box">
         <h2 class="text-3xl italic">SAHAYARAJ-2026</h2>
         <p class="mt-2 text-sm">SECURE ACCESS PANEL</p>
-        <input type="password" id="passInput" placeholder="ENTER PASSWORD" oninput="showExpiryWarning()">
-        <div id="expiryWarning" class="expiry-alert hidden"></div>
+        <input type="password" id="passInput" placeholder="ENTER PASSWORD">
         <button onclick="verifyPass()" class="w-full mt-6 bg-yellow-500 text-black py-4 rounded-xl btn-style">LOGIN NOW ✅</button>
         <p id="errorMsg" class="mt-4 text-red-500 hidden text-xs"></p>
     </div>
@@ -182,35 +181,20 @@
 </div>
 
 <script>
+// --- நீங்கள் மாற்ற வேண்டிய பகுதி (Passwords & Expiry Dates) ---
 const authKeys = {
-    "SAHA01": "2026-05-30",
-    "90800": "2026-05-31",
-    "KANAGU": "2026-05-29",
-    "SPARK": "2026-05-30",
-    "AKSAYA": "2026-05-30"
+    "SAHA01": "2026-05-01",  // பாஸ்வேர்டு : எக்ஸ்பைரி டேட் (Year-Month-Day)
+    "SAHA02": "2026-12-31",
+    "SAHA03": "2027-01-10",
+    "SAHA04": "2026-06-15",
+    "SAHA05": "2026-04-30",
+    "MADURAI": "2026-05-30",
+    "SAHA02": "2026-12-31",
+    "SAHA03": "2027-01-10",
+    "SAHA04": "2026-06-15",
+    "INDIA": "2026-05-30",
+    "MADURAI": "2026-05-30",
 };
-
-function showExpiryWarning() {
-    const pin = document.getElementById('passInput').value;
-    const warn = document.getElementById('expiryWarning');
-    if(authKeys[pin]) {
-        const expiryDate = new Date(authKeys[pin]);
-        const today = new Date();
-        const diffDays = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
-        
-        if(diffDays <= 3 && diffDays > 0) {
-            warn.innerText = `⚠️ ALERT: PASSWORD EXPIRES IN ${diffDays} DAYS!`;
-            warn.classList.remove('hidden');
-        } else if (diffDays === 0) {
-            warn.innerText = `⚠️ ALERT: PASSWORD EXPIRES TODAY!`;
-            warn.classList.remove('hidden');
-        } else {
-            warn.classList.add('hidden');
-        }
-    } else {
-        warn.classList.add('hidden');
-    }
-}
 
 function checkAccess() {
     const isLogged = sessionStorage.getItem('saha_auth');
@@ -239,6 +223,7 @@ function verifyPass() {
         err.classList.remove('hidden');
     }
 }
+// -----------------------------------------------------------
 
 let cfg = JSON.parse(localStorage.getItem('saha_v66_cfg')) || {
     "title":"SAHAYARAJ-2026", "headCol":"#0c40bb", "nameCol":"#ffffff", "outCol":"#54301d", "btmCol":"#0b08d4", "catLetCol":"#e32b2b", "catNumCol":"#1e40af",

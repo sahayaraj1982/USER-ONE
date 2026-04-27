@@ -184,18 +184,19 @@
 // --- நீங்கள் மாற்ற வேண்டிய பகுதி (Passwords & Expiry Dates) ---
 const authKeys = {
     "SAHA01": "2026-05-01",  // பாஸ்வேர்டு : எக்ஸ்பைரி டேட் (Year-Month-Day)
-    "SAHA02": "2026-12-31",
-    "SAHA03": "2027-01-10",
-    "SAHA04": "2026-06-15",
-    "SAHA05": "2026-04-30",
+    "AKSAYA": "2026-12-31",
+    "SPARK": "2027-01-10",
+    "90800": "2026-06-15",
+    "KANAGU": "2026-04-30",
     "MADURAI": "2026-05-30",
-    "SAHA02": "2026-12-31",
+"SAHA02": "2026-12-31",
     "SAHA03": "2027-01-10",
     "SAHA04": "2026-06-15",
     "INDIA": "2026-05-30",
     "MADURAI": "2026-05-30",
 };
 
+    
 function checkAccess() {
     const isLogged = sessionStorage.getItem('saha_auth');
     if(isLogged === 'true') {

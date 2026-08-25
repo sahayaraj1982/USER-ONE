@@ -116,6 +116,7 @@
                         <button onclick="promptAddCat()" class="bg-cyan-600 py-3 rounded-lg btn-style text-[10px]">ADD CAT</button>
                         <button onclick="promptDelCat()" class="bg-pink-600 py-3 rounded-lg btn-style text-[10px]">DEL CAT</button>
                         <button id="delAllBtn" onclick="deleteAll()" class="bg-red-600 py-3 rounded-lg btn-style text-[10px]">DEL ALL</button>
+                        <button id="toggleTotalBtn" onclick="toggleTotalVisibility()" class="bg-yellow-600 py-3 rounded-lg btn-style text-[10px]">SHOW/HIDE TOTAL</button>
                     </div>
                     <input type="file" id="impFile" class="hidden" onchange="importData(event)">
                     <button onclick="refresh()" class="w-full bg-slate-800 text-white py-4 mt-4 rounded-xl btn-style">SEARCH DATA 🔎</button>
@@ -360,6 +361,13 @@ function updateTotalsUIVisibility() {
             grandBox.classList.add('hidden');
         }
     }
+}
+
+function toggleTotalVisibility() {
+    cfg.showTotals = !cfg.showTotals;
+    localStorage.setItem('indian_v26_cfg', JSON.stringify(cfg));
+    updateTotalsUIVisibility();
+    refresh();
 }
 
 let clockStarted = false;

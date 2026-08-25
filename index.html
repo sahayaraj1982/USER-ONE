@@ -11,7 +11,7 @@
         :root { --p-bg: #0c40bb; --n-col: #ffffff; --out: #54301d; --btm: #0b08d4; --c-let: #e32b2b; --c-num: #1e40af; }
         body { background-color: #475569; font-family: 'Arial Black', sans-serif; overflow-x: hidden; }
         * { font-weight: 950 !important; }
-        .main-app-box { border: 10px solid var(--out); margin: 10px auto; border-radius: 40px; background: #f1f5f9; overflow-x: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 95%; max-width: 1400px; }
+        .main-app-box { border: 10px solid var(--out); margin: 10px auto; border-radius: 40px; background: #f1f5f9; overflow-x: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); width: 90% !important; max-width: 1400px; }
         .premium-header { background-color: var(--p-bg); padding: 25px; border-bottom: 10px solid var(--btm); position: relative; }
         #loginOverlay { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; align-items: center; justify-content: center; flex-direction: column; color: gold; text-align: center; }
         .login-box { background: #111; padding: 40px; border: 5px solid gold; border-radius: 30px; width: 90%; max-width: 400px; box-shadow: 0 0 30px gold; }
@@ -28,11 +28,6 @@
         .action-bar { display: flex; width: 100%; background: #000; padding: 8px; gap: 8px; }
         .action-btn { flex: 1; padding: 12px 0; border: 3px solid #fff; color: #fff; font-size: 14px; text-align: center; cursor: pointer; border-radius: 12px; transition: 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 0 #444; }
         .action-btn.active { background: #ffeb3b; color: #000; border-color: #000; box-shadow: none; transform: translateY(4px); }
-        .g-led { width: 35px; height: 35px; border-radius: 50%; background: #222; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; box-sizing: border-box; margin: 0 auto; }
-        .g-led.disconnected { color: #ff3333; border: 2px solid #ff3333; box-shadow: 0 0 15px #ff3333, inset 0 0 5px #ff3333, 0 0 5px #fff; }
-        .g-led.connected { color: #00ff00; border: 2px solid #00ff00; box-shadow: 0 0 15px #00ff00, inset 0 0 5px #00ff00, 0 0 5px #fff; }
-        @keyframes k_a9 { 50% { transform: rotateY(180deg); } }
-        .g-led.saving.a9 { animation: k_a9 1s infinite ease-in-out; transform-style: preserve-3d; }
     </style>
 </head>
 <body onload="checkAccess()">
@@ -64,12 +59,12 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-6">
-                    <div class="text-right text-white">
+                    <div id="grandTotalBox" class="text-right text-white hidden">
                         <p class="text-xs opacity-70">RECORDS: <span id="recCount" class="text-yellow-400">0</span></p>
-                        <h2 id="mainTotal" class="text-4xl" style="text-shadow: 2px 2px 0 #000;">₹0</h2>
+                        <h2 id="mainTotal" class="text-4xl" style="text-shadow: 2px 2px 0 #000;">₹***</h2>
                     </div>
                     <div class="flex flex-col items-center">
-                        <button onclick="openSettings()" class="text-5xl text-white hover:rotate-90 transition-transform">⚙️</button>
+                        <button id="settingsIconBtn" onclick="openSettings()" class="text-5xl text-white hover:rotate-90 transition-transform">⚙️</button>
                     </div>
                 </div>
             </div>
@@ -164,9 +159,9 @@
                 <div class="setting-row"><span>Cat Number Col</span><input type="color" id="setCatNumCol"></div>
             </div>
             <div>
-                <p class="section-title">2. Font & Sizes</p>
+                <p class="section-title">2. Font & Sizes & Controls</p>
                 <div class="setting-row"><span>Banner Name</span><input type="text" id="setTitle" class="w-24 text-[10px]"></div>
-                <div class="setting-row"><span>Date/Time Size</span><input type="number" id="setFsDT" class="w-12"></div>
+                <div class="setting-row"><span>Show Totals</span><input type="checkbox" id="swTotals"></div>
                 <div class="setting-row"><span>Cat Letter Size</span><input type="number" id="setFsCatL" class="w-12"></div>
                 <div class="setting-row"><span>Cat Number Size</span><input type="number" id="setFsCatN" class="w-12"></div>
                 <div class="setting-row"><span>Entry Font Size</span><input type="number" id="setFsEnt" class="w-12"></div>
@@ -205,12 +200,15 @@ const authKeys = {
 
 let cfg = JSON.parse(localStorage.getItem('indian_v26_cfg')) || {
     "title":"INDIAN-2026", "headCol":"#0c40bb", "nameCol":"#ffffff", "outCol":"#54301d", "btmCol":"#0b08d4", "catLetCol":"#e32b2b", "catNumCol":"#1e40af",
-    "scrW":95, "fsDT":22, "fsCatL":14, "fsCatN":28, "fsEnt":14,
+    "scrW":90, "fsDT":22, "fsCatL":14, "fsCatN":28, "fsEnt":14,
     "swBack":true, "swDate":true, "swClock":true, "swPen":true, "swTrDel":true, "swAllDel":true, "swPdf":true, "swWa":true, "swImp":true, "swExp":true,
+    "showTotals":false,
     "adminPin":"1020", "loginPin":"1002",
     "cats":["FINANCE", "TICKET", "RO", "OTHER"]
 };
 
+cfg.scrW = 90;
+if(cfg.showTotals === undefined) cfg.showTotals = false;
 if(!cfg.cats || cfg.cats.length === 0) cfg.cats = ["FINANCE", "TICKET", "RO", "OTHER"];
 
 let db = [];
@@ -220,9 +218,6 @@ let currentViewMode = "CR";
 function checkAccess() {
     const login = document.getElementById('loginOverlay');
     const app = document.getElementById('appPage');
-
-    // Login state மட்டும் session-ல் இருந்தால் Dashboard திறக்கும்.
-    // இல்லையெனில் Login Page எப்போதும் தெளிவாக காட்டப்படும்.
     const isLogged = sessionStorage.getItem('indian_auth') === 'true';
 
     if (isLogged) {
@@ -250,7 +245,7 @@ function verifyPass() {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('appPage').classList.remove('invisible');
             loadLocalData();
-            } else {
+        } else {
             err.innerText = "PASSWORD EXPIRED ON " + authKeys[pin].split('-').reverse().join('/');
             err.classList.remove('hidden');
         }
@@ -262,13 +257,7 @@ function verifyPass() {
 
 function normalizeMobile(value) {
     if (value === null || value === undefined) return "";
-    let n = String(value)
-        .trim()
-        .replace(/\s+/g, "")
-        .replace(/-/g, "")
-        .replace(/\(/g, "")
-        .replace(/\)/g, "")
-        .replace(/\./g, "");
+    let n = String(value).trim().replace(/\s+/g, "").replace(/-/g, "").replace(/\(/g, "").replace(/\)/g, "").replace(/\./g, "");
     if (n.startsWith("+91")) n = n.substring(3);
     if (n.startsWith("0091")) n = n.substring(4);
     n = n.replace(/\D/g, "");
@@ -293,7 +282,6 @@ function cleanDate(dateStr) {
             return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
         }
     }
-
     let d = new Date(str);
     if(!isNaN(d.getTime())) {
         let year = d.getFullYear();
@@ -342,7 +330,7 @@ function init() {
     document.documentElement.style.setProperty('--c-num', cfg.catNumCol);
 
     const main = document.getElementById('mainContainer');
-    if(main) main.style.width = cfg.scrW + "%";
+    if(main) main.style.width = "90%";
 
     document.getElementById('dispTitle').innerText = cfg.title;
     document.getElementById('backBtn').style.display = cfg.swBack ? 'block' : 'none';
@@ -357,9 +345,21 @@ function init() {
 
     document.getElementById('liveDateTime').style.display = (cfg.swDate || cfg.swClock) ? 'block' : 'none';
 
+    updateTotalsUIVisibility();
     startClock();
     renderUI();
     refresh();
+}
+
+function updateTotalsUIVisibility() {
+    const grandBox = document.getElementById('grandTotalBox');
+    if (grandBox) {
+        if (cfg.showTotals) {
+            grandBox.classList.remove('hidden');
+        } else {
+            grandBox.classList.add('hidden');
+        }
+    }
 }
 
 let clockStarted = false;
@@ -397,7 +397,7 @@ function renderUI() {
         grid.innerHTML += `
             <div class="cat-card">
                 <p style="font-size:${cfg.fsCatL}px; color:var(--c-let)">${escapeHtml(c)}</p>
-                <h3 style="font-size:${cfg.fsCatN}px; color:var(--c-num)">₹<span id="sum_${safeCat}">0</span></h3>
+                <h3 style="font-size:${cfg.fsCatN}px; color:var(--c-num)">₹<span id="sum_${safeCat}">***</span></h3>
             </div>`;
         eSel.innerHTML += `<option value="${escapeAttr(c)}">${escapeHtml(c)}</option>`;
         fList.innerHTML += `<button onclick="toggleFilterByValue(this)" data-cat="${escapeAttr(c)}" class="bg-blue-900 text-white px-3 py-1 rounded-lg btn-style text-[10px]">${escapeHtml(c)}</button>`;
@@ -458,7 +458,6 @@ function saveData() {
     const a = document.getElementById('eAmt').value;
     if(!d || !a) return alert("DATE AND AMOUNT REQUIRED!");
 
-    // SAVE always creates a NEW entry, even when the form was opened by EDIT.
     const entry = buildEntry(String(Date.now()));
     db.push(entry);
     saveLocalData();
@@ -476,7 +475,6 @@ function updateData() {
     if(!editId) return alert("முதலில் EDIT செய்யவும்!");
     if(!d || !a) return alert("DATE AND AMOUNT REQUIRED!");
 
-    // UPDATE changes ONLY the existing entry.
     const idx = db.findIndex(x => String(x.id) === String(editId));
     if(idx === -1) return alert("Record not found for update!");
 
@@ -490,8 +488,6 @@ function updateData() {
 }
 
 function refresh() {
-    // Latest entry must always appear first. For entries on the same date,
-    // use the entry id (created from Date.now()) so 4,3,2,1 order is preserved.
     db.sort((a, b) => {
         const dateDiff = new Date(cleanDate(b.date)) - new Date(cleanDate(a.date));
         if (dateDiff !== 0) return dateDiff;
@@ -505,19 +501,8 @@ function refresh() {
     const monthYearStr = now.toLocaleDateString('ta-IN', { month: 'long', year: 'numeric' });
     document.getElementById('currentMonthDisplay').innerText = monthYearStr;
 
-    let html = "", grand = 0;
-    let tempSums = {};
-    cfg.cats.forEach(c => tempSums[c] = 0);
-
+    let html = "";
     const filtered = getFilteredData();
-
-    filtered.forEach(t => {
-        const amt = parseFloat(t.amt) || 0;
-        const itemType = (t.type && t.type.toUpperCase() === "DR") ? "DR" : "CR";
-        const v = itemType === "CR" ? amt : -amt;
-        if(Object.prototype.hasOwnProperty.call(tempSums, t.cat)) tempSums[t.cat] += v;
-        grand += v;
-    });
 
     filtered.forEach(t => {
         const amt = parseFloat(t.amt) || 0;
@@ -541,13 +526,39 @@ function refresh() {
     });
 
     document.getElementById('resTable').innerHTML = html;
-    document.getElementById('mainTotal').innerText = "₹" + grand.toLocaleString();
+
+    let grandTotal = 0;
+    let catTotals = {};
+    cfg.cats.forEach(c => catTotals[c] = 0);
+
+    filtered.forEach(t => {
+        const amt = parseFloat(t.amt) || 0;
+        const itemType = (t.type && t.type.toUpperCase() === "DR") ? "DR" : "CR";
+        const signedAmt = itemType === "CR" ? amt : -amt;
+        grandTotal += signedAmt;
+        if(catTotals[t.cat] !== undefined) {
+            catTotals[t.cat] += signedAmt;
+        }
+    });
+
+    if (cfg.showTotals) {
+        document.getElementById('mainTotal').innerText = "₹" + grandTotal.toLocaleString();
+    } else {
+        document.getElementById('mainTotal').innerText = "₹***";
+    }
+    
     document.getElementById('recCount').innerText = filtered.length;
 
     cfg.cats.forEach(c => {
         const safeCat = String(c).replace(/[^a-zA-Z0-9_-]/g, '_');
         const el = document.getElementById('sum_' + safeCat);
-        if(el) el.innerText = (tempSums[c] || 0).toLocaleString();
+        if(el) {
+            if (cfg.showTotals) {
+                el.innerText = (catTotals[c] || 0).toLocaleString();
+            } else {
+                el.innerText = "***";
+            }
+        }
     });
 }
 
@@ -570,6 +581,8 @@ function getFilteredData() {
         let mDate = false;
         if (fD || tD) {
             mDate = ((!fD || cleanTDate >= fD) && (!tD || cleanTDate <= tD));
+        } else if (sM !== "" || sDes !== "") {
+            mDate = true;
         } else {
             mDate = (cleanTDate >= firstDayCurrentMonth && cleanTDate <= lastDayCurrentMonth);
         }
@@ -596,11 +609,11 @@ function openSettings() {
     document.getElementById('setCatLetCol').value = cfg.catLetCol;
     document.getElementById('setCatNumCol').value = cfg.catNumCol;
     document.getElementById('setTitle').value = cfg.title;
-    document.getElementById('setFsDT').value = cfg.fsDT;
+    document.getElementById('swTotals').checked = cfg.showTotals;
     document.getElementById('setFsCatL').value = cfg.fsCatL;
     document.getElementById('setFsCatN').value = cfg.fsCatN;
     document.getElementById('setFsEnt').value = cfg.fsEnt;
-    document.getElementById('setScrW').value = cfg.scrW;
+    document.getElementById('setScrW').value = 90;
     document.getElementById('swBack').checked = cfg.swBack;
     document.getElementById('swDate').checked = cfg.swDate;
     document.getElementById('swClock').checked = cfg.swClock;
@@ -619,11 +632,11 @@ function saveSettings() {
     cfg.catLetCol = document.getElementById('setCatLetCol').value;
     cfg.catNumCol = document.getElementById('setCatNumCol').value;
     cfg.title = document.getElementById('setTitle').value;
-    cfg.fsDT = parseInt(document.getElementById('setFsDT').value) || 22;
+    cfg.showTotals = document.getElementById('swTotals').checked;
     cfg.fsCatL = parseInt(document.getElementById('setFsCatL').value) || 14;
     cfg.fsCatN = parseInt(document.getElementById('setFsCatN').value) || 28;
     cfg.fsEnt = parseInt(document.getElementById('setFsEnt').value) || 14;
-    cfg.scrW = parseInt(document.getElementById('setScrW').value) || 95;
+    cfg.scrW = 90;
     cfg.swBack = document.getElementById('swBack').checked;
     cfg.swDate = document.getElementById('swDate').checked;
     cfg.swClock = document.getElementById('swClock').checked;
@@ -721,7 +734,6 @@ async function deleteAll() {
     );
 
     if(fileNameInput === null) return;
-
     const finalName = fileNameInput.trim() !== "" ? fileNameInput.trim() : "Backup_All";
 
     const ok = confirm("Backup file பெயர்:\n" + finalName + ".json\n\nஇந்த backup download செய்த பிறகு ALL DATA-வை delete செய்ய OK கொடுக்கவும்.");
@@ -776,53 +788,145 @@ function promptDelCat() {
 }
 
 function downloadPDF() {
-    if(!window.jspdf) return alert("PDF library not loaded.");
+    if (!window.jspdf || typeof window.jspdf.jsPDF !== 'function') {
+        return alert("PDF library not loaded. Please check internet connection and try again.");
+    }
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    const filtered = getFilteredData();
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    doc.text(cfg.title, 105, 20, {align: 'center'});
+    if (typeof doc.autoTable !== 'function') {
+        return alert("PDF table library not loaded. Please refresh the page and try again.");
+    }
 
-    let summaryData = [], grandTotal = 0;
-    cfg.cats.forEach(c => {
-        let catSum = 0;
-        filtered.forEach(t => {
-            catSum += (t.type === "CR" ? parseFloat(t.amt) : -parseFloat(t.amt));
-        });
-        if(catSum !== 0) summaryData.push([c, `Rs. ${catSum.toLocaleString()}`]);
-        grandTotal += catSum;
+    const filtered = getFilteredData().slice().sort((a, b) => {
+        const ad = new Date(a.date || 0).getTime();
+        const bd = new Date(b.date || 0).getTime();
+        if (bd !== ad) return bd - ad;
+        return Number(b.id || 0) - Number(a.id || 0);
     });
 
-    doc.autoTable({ body: summaryData, startY: 40, theme: 'grid' });
-    doc.text(`GRAND TOTAL: RS. ${grandTotal.toLocaleString()}`, 14, doc.lastAutoTable.finalY + 10);
+    const money = n => 'Rs. ' + Number(n || 0).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    const cleanText = value => String(value ?? '').replace(/[\r\n]+/g, ' ').trim();
+    const dateText = value => {
+        const d = cleanDate(value);
+        if (!d) return '';
+        const parts = d.split('-');
+        return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : d;
+    };
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text(String(cfg.title || 'INDIA-2026'), 148.5, 13, { align: 'center' });
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Transaction Report', 148.5, 19, { align: 'center' });
+    doc.text('Generated: ' + new Date().toLocaleString('en-IN'), 287, 19, { align: 'right' });
+
+    let grandCredit = 0;
+    let grandDebit = 0;
+    const summaryRows = [];
+    const categories = Array.isArray(cfg.cats) ? cfg.cats : [];
+
+    categories.forEach(cat => {
+        const catRows = filtered.filter(t => String(t.cat || '').toUpperCase() === String(cat).toUpperCase());
+        if (!catRows.length) return;
+        const credit = catRows.reduce((sum, t) => sum + (String(t.type).toUpperCase() === 'CR' ? Number(t.amt || 0) : 0), 0);
+        const debit  = catRows.reduce((sum, t) => sum + (String(t.type).toUpperCase() === 'DR' ? Number(t.amt || 0) : 0), 0);
+        const balance = credit - debit;
+        grandCredit += credit;
+        grandDebit += debit;
+        summaryRows.push([cleanText(cat), cfg.showTotals ? money(credit) : 'Rs. ***', cfg.showTotals ? money(debit) : 'Rs. ***', cfg.showTotals ? money(balance) : 'Rs. ***']);
+    });
+
     doc.autoTable({
-        head: [['DATE', 'MOBILE', 'CATAGORY', 'DISCRIPTION', 'TYPE', 'AMOUNT']],
-        body: filtered.map(t => [
-            cleanDate(t.date).split('-').reverse().join('/'),
-            t.mob, t.cat, t.desc, t.type, Number(t.amt).toLocaleString()
-        ]),
-        startY: doc.lastAutoTable.finalY + 20
+        startY: 25,
+        margin: { left: 10, right: 10 },
+        head: [['CATEGORY', 'CREDIT', 'DEBIT', 'BALANCE']],
+        body: summaryRows.length ? summaryRows : [['NO DATA', money(0), money(0), money(0)]],
+        theme: 'grid',
+        styles: { font: 'helvetica', fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+        headStyles: { fontStyle: 'bold', halign: 'center' },
+        columnStyles: {
+            0: { cellWidth: 95 },
+            1: { cellWidth: 55, halign: 'right' },
+            2: { cellWidth: 55, halign: 'right' },
+            3: { cellWidth: 55, halign: 'right' }
+        },
+        didDrawPage: data => {
+            doc.setFontSize(7);
+            doc.text(`Page ${data.pageNumber}`, 287, 202, { align: 'right' });
+        }
     });
-    doc.save(`${cfg.title}_Report.pdf`);
+
+    let y = (doc.lastAutoTable && doc.lastAutoTable.finalY ? doc.lastAutoTable.finalY : 25) + 7;
+    if (y > 175) {
+        doc.addPage();
+        y = 15;
+    }
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(11);
+    doc.text(`GRAND BALANCE: ${cfg.showTotals ? money(grandCredit - grandDebit) : 'Rs. ***'}`, 10, y);
+
+    const transactionRows = filtered.map((t, index) => [
+        String(index + 1),
+        dateText(t.date),
+        cleanText(t.mob),
+        cleanText(t.cat),
+        cleanText(t.desc),
+        String(t.type || '').toUpperCase(),
+        money(t.amt)
+    ]);
+
+    doc.autoTable({
+        startY: y + 5,
+        margin: { top: 15, bottom: 15, left: 8, right: 8 },
+        head: [['#', 'DATE', 'MOBILE', 'CATEGORY', 'REMARK', 'TYPE', 'AMOUNT']],
+        body: transactionRows.length ? transactionRows : [['', '', '', '', 'NO TRANSACTIONS', '', '']],
+        theme: 'grid',
+        styles: { font: 'helvetica', fontSize: 7, cellPadding: 2, overflow: 'linebreak', valign: 'middle' },
+        headStyles: { fontStyle: 'bold', halign: 'center', valign: 'middle' },
+        columnStyles: {
+            0: { cellWidth: 10, halign: 'center' },
+            1: { cellWidth: 25, halign: 'center' },
+            2: { cellWidth: 30 },
+            3: { cellWidth: 38 },
+            4: { cellWidth: 105 },
+            5: { cellWidth: 18, halign: 'center' },
+            6: { cellWidth: 42, halign: 'right' }
+        },
+        didDrawPage: data => {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(7);
+            doc.text(`Page ${data.pageNumber}`, 289, 202, { align: 'right' });
+        }
+    });
+
+    const totalPages = doc.getNumberOfPages();
+    for (let page = 1; page <= totalPages; page++) {
+        doc.setPage(page);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7);
+        doc.text(String(cfg.title || 'INDIA-2026'), 8, 202);
+        doc.text(`Page ${page} / ${totalPages}`, 289, 202, { align: 'right' });
+    }
+
+    doc.save(`${String(cfg.title || 'INDIA-2026').replace(/[^a-z0-9_-]/gi, '_')}_Report.pdf`);
 }
 
 function sendWhatsApp() {
+    let tot = 0;
     const filtered = getFilteredData();
-    let msg = `*${cfg.title} SUMMARY*\\n`;
-    let grand = 0;
-
-    cfg.cats.forEach(c => {
-        let s = 0;
-        filtered.forEach(t => {
-            if(t.cat === c) s += (t.type === "CR" ? parseFloat(t.amt) : -parseFloat(t.amt));
-        });
-        if(s !== 0) msg += `\\n${c}: ₹${s.toLocaleString()}`;
-        grand += s;
+    filtered.forEach(t => {
+        const amt = parseFloat(t.amt) || 0;
+        const itemType = (t.type && t.type.toUpperCase() === "DR") ? "DR" : "CR";
+        tot += (itemType === "CR" ? amt : -amt);
     });
-
-    msg += `\\n\\n*TOTAL: ₹${grand.toLocaleString()}*`;
+    const msg = `*${cfg.title} SUMMARY*\\nTOTAL RECORDS: ${filtered.length}\\nTOTAL BALANCE: ${cfg.showTotals ? 'Rs. ' + tot.toLocaleString() : 'Rs. ***'}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 </script>

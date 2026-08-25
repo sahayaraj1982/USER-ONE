@@ -208,8 +208,9 @@ let cfg = JSON.parse(localStorage.getItem('indian_v26_cfg')) || {
     "cats":["FINANCE", "TICKET", "RO", "OTHER"]
 };
 
+// ஆப் ஒவ்வொருமுறை திறக்கும் பொழுதும் பேலன்ஸ் மறைக்கப்பட வேண்டும் (showTotals = false)
+cfg.showTotals = false;
 cfg.scrW = 90;
-if(cfg.showTotals === undefined) cfg.showTotals = false;
 if(!cfg.cats || cfg.cats.length === 0) cfg.cats = ["FINANCE", "TICKET", "RO", "OTHER"];
 
 let db = [];
@@ -365,7 +366,6 @@ function updateTotalsUIVisibility() {
 
 function toggleTotalVisibility() {
     cfg.showTotals = !cfg.showTotals;
-    localStorage.setItem('indian_v26_cfg', JSON.stringify(cfg));
     updateTotalsUIVisibility();
     refresh();
 }
